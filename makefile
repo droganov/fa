@@ -6,6 +6,7 @@ f:
 	pip freeze > requirements.txt
 
 t:
+	ENV_FILE=.env.test python script.py yoyo-up
 	python -m pytest
 
 # Yoyo
