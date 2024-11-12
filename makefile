@@ -1,6 +1,6 @@
 d:
 	@echo "Starting dev"
-	uvicorn app.main:app --reload
+	ENV_FILE=.env.local uvicorn app.main:app --reload
 
 f:
 	pip freeze > requirements.txt
