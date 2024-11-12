@@ -1,13 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from os import path
 import glob
 import importlib
 
 from app.providers.bugsnag import bugsnag_notify
-from app.routers import v1
-
-app = FastAPI()
+from app.app import app, v1
 
 
 @app.exception_handler(Exception)

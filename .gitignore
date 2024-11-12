@@ -1,9 +1,10 @@
 __pycache__
 .DS_Store
 .env
+.env.deploy
 .env.local
 .env.production
-.env.deploy
+.env.test
 /env
 .vercel
 .mypy_cache

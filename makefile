@@ -5,15 +5,17 @@ d:
 f:
 	pip freeze > requirements.txt
 
+t:
+	python -m pytest
 
-# Yoyo migrations
-y-new:
+# Yoyo
+yn:
 	@echo "Creating a new migration"
 	@read -p "Enter migration name: " name; \
 	yoyo new -m "$$name" --sql
 
-y-up:
+yu:
 	ENV_FILE=.env.local python script.py yoyo-up
 
-y-down:
+yd:
 	ENV_FILE=.env.local python script.py yoyo-down
