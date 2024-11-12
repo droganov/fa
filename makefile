@@ -13,7 +13,7 @@ y-new:
 	yoyo new -m "$$name" --sql
 
 y-up:
-	python script.py apply_migrations
+	ENV_FILE=.env.local python script.py yoyo-up
 
 y-down:
-	python script.py rollback_migrations
+	ENV_FILE=.env.local python script.py yoyo-down
