@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '''
+    /(\.git|\.venv|\.mypy_cache)/
+    /(build|dist)/
+'''
+
+[tool.flake8]
+ignore = ["E501"]
+max-line-length = 88
+count = true

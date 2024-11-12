@@ -1,0 +1,10 @@
+__pycache__
+.DS_Store
+.env
+.env.local
+.env.production
+.env.deploy
+/env
+.vercel
+.mypy_cache
+tmp
