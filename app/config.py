@@ -37,7 +37,6 @@ class Config(BaseSettings):
         """Pydantic configuration settings."""
 
         env_file = getenv("ENV_FILE", ".env")
-        print("ENV_FILE", env_file)
         env_prefix = ""
         extra = "allow"
 
