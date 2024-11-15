@@ -18,7 +18,7 @@ async def unicorn_exception_handler(request: Request, exc: Exception):
 
 
 current_dir = path.dirname(__file__)
-endpoint_files = glob.glob(path.join(current_dir, "**", "*_route.py"), recursive=True)
+endpoint_files = glob.glob(path.join(current_dir, "**", "route_*.py"), recursive=True)
 
 
 for file_path in endpoint_files:
