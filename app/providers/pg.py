@@ -101,3 +101,29 @@ async def pg_transaction(
             return await AsyncClientCursor(conn).execute(query, values)
         finally:
             await conn.close()
+
+
+# CRUD Helpers
+
+
+async def pg_update(
+    table: str, patch: dict, Model: Type[QueryResult] | None = None, key: str = "uuid"
+) -> QueryResult | None:
+    if key not in patch:
+        raise ValueError(f"Patch dictionary must contain '{key}' key for update.")
+
+    update_fields = {k: v for k, v in patch.items() if k != key}
+    set_clause = ", ".join(f'"{k}" = %({k})s' for k in update_fields.keys())
+
+    if Model is None:
+        await pg_execute(
+            query=f'UPDATE "{table}" SET {set_clause} WHERE "{key}" = %({key})s RETURNING *',
+            values=patch,
+        )
+        return None
+
+    return await pg_fetch_one(
+        query=f'UPDATE "{table}" SET {set_clause} WHERE "{key}" = %({key})s RETURNING *',
+        values=patch,
+        Model=Model,
+    )
