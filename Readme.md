@@ -1,6 +1,7 @@
 # FastAPI Boilerplate
 
 ## Setup
+
 ### Install Python and PostgreSQL
 
 ```sh
@@ -44,6 +45,7 @@ print(f'SESSION_SALT="{generate_key(64)}"')
 make d
 ```
 
-API: [http://127.0.0.1:8000/v1/](http://127.0.0.1:8000/v1/)
-Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-Schema: [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
+## Links
+- API: [http://127.0.0.1:8000/v1/](http://127.0.0.1:8000/v1/)
+- Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- Schema: [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
