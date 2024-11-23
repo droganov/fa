@@ -5,5 +5,5 @@ class Hello(BaseModel):
     hello: str
 
 
-def hello():
+def say_hello():
     return Hello(hello="World!")
