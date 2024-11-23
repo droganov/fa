@@ -10,9 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      PYTHON_VERSION: ${{ steps.get-versions.outputs.python-version }}
+      POSTGRES_VERSION: ${{ steps.get-versions.outputs.postgres-version }}
+
     services:
       postgres:
-        image: postgres:${{ steps.get-postgres-version.outputs.postgres-version }}
+        image: postgres:${{ env.POSTGRES_VERSION }}
         ports:
           - 5432:5432
         env:
@@ -28,22 +32,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get Python version from .tool-versions
-        id: get-python-version
+      - name: Get versions from .tool-versions
+        id: get-versions
         run: |
           PYTHON_VERSION=$(grep ^python .tool-versions | awk '{print $2}')
-          echo "python-version=${PYTHON_VERSION}" >> $GITHUB_OUTPUT
-
-      - name: Get PostgreSQL version from .tool-versions
-        id: get-postgres-version
-        run: |
           POSTGRES_VERSION=$(grep ^postgres .tool-versions | awk '{print $2}')
+          echo "python-version=${PYTHON_VERSION}" >> $GITHUB_OUTPUT
           echo "postgres-version=${POSTGRES_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ steps.get-python-version.outputs.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |
