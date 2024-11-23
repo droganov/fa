@@ -5,7 +5,7 @@ import glob
 import importlib
 
 from app.providers.bugsnag import bugsnag_notify
-from app.app import app, v1
+from app.framework.app import app, v1
 
 
 @app.exception_handler(Exception)
