@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:${{ steps.get-postgres-version.outputs.postgres-version }}
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Python version from .tool-versions
+        id: get-python-version
+        run: |
+          PYTHON_VERSION=$(grep ^python .tool-versions | awk '{print $2}')
+          echo "python-version=${PYTHON_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Get PostgreSQL version from .tool-versions
+        id: get-postgres-version
+        run: |
+          POSTGRES_VERSION=$(grep ^postgres .tool-versions | awk '{print $2}')
+          echo "postgres-version=${POSTGRES_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ steps.get-python-version.outputs.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          source env/bin/activate
+          make t
