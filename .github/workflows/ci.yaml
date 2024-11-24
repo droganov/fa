@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Read .tool-versions
         uses: marocchino/tool-versions-action@v1
         id: versions
@@ -19,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ steps.read_versions.outputs.python }}
+          python-version: ${{ steps.versions.outputs.python }}
 
       - name: Install dependencies
         run: |
@@ -34,8 +35,7 @@ jobs:
             -e POSTGRES_USER=postgres \
             -e POSTGRES_PASSWORD=postgres \
             -e POSTGRES_DB=test_db \
-            -p 5432:5432 \
-            postgres:${{ steps.read_versions.outputs.postgres }}
+            postgres:${{ steps.versions.outputs.postgres }}
 
           # Wait for PostgreSQL to be ready
           for i in {1..30}; do
