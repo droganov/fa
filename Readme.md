@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ## Create Env File
 
 ```sh
-cp .env.sample .env.local
+cp -n .env.sample .env.local || { echo "Error: .env.local already exists. Aborting copy."; exit 1; }
 ```
 
 ## Replace Secrets in the .env.local with:
@@ -46,6 +46,7 @@ make d
 ```
 
 ## Links
+
 - API: [http://127.0.0.1:8000/v1/](http://127.0.0.1:8000/v1/)
 - Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - Schema: [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
