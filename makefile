@@ -7,7 +7,11 @@ f:
 
 t:
 	ENV_FILE=.env.test python script.py yoyo-up
-	python -m pytest
+	ENV_FILE=.env.test python -m pytest
+
+clean:
+	find . -name "*.pyc" -exec rm -f {} \;
+	find . -name "__pycache__" -exec rm -rf {} \;
 
 # Yoyo
 yn:
