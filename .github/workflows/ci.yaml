@@ -10,40 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      PYTHON_VERSION: ${{ steps.get-versions.outputs.python-version }}
-      POSTGRES_VERSION: ${{ steps.get-versions.outputs.postgres-version }}
-
-    services:
-      postgres:
-        image: postgres:${{ env.POSTGRES_VERSION }}
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v3
-
-      - name: Get versions from .tool-versions
-        id: get-versions
-        run: |
-          PYTHON_VERSION=$(grep ^python .tool-versions | awk '{print $2}')
-          POSTGRES_VERSION=$(grep ^postgres .tool-versions | awk '{print $2}')
-          echo "python-version=${PYTHON_VERSION}" >> $GITHUB_OUTPUT
-          echo "postgres-version=${POSTGRES_VERSION}" >> $GITHUB_OUTPUT
+      - name: Read .tool-versions
+        uses: marocchino/tool-versions-action@v1
+        id: versions
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ steps.read_versions.outputs.python }}
 
       - name: Install dependencies
         run: |
@@ -52,7 +28,32 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Start PostgreSQL
+        run: |
+          docker run -d --name postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=test_db \
+            -p 5432:5432 \
+            postgres:${{ steps.read_versions.outputs.postgres }}
+
+          # Wait for PostgreSQL to be ready
+          for i in {1..30}; do
+            if docker exec postgres pg_isready -U postgres; then
+              echo "PostgreSQL is ready."
+              break
+            fi
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
+
       - name: Run tests
         run: |
           source env/bin/activate
           make t
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          docker stop postgres
+          docker rm postgres
