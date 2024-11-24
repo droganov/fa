@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Read .tool-versions
+        uses: marocchino/tool-versions-action@v1
+        id: versions
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ steps.versions.outputs.python }}
+          # cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start PostgreSQL
+        run: |
+          docker run -d --name postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=test_db \
+            -p 5432:5432 \
+            postgres:${{ steps.versions.outputs.postgres }}
+
+          # Wait for PostgreSQL to be ready
+          for i in {1..30}; do
+            if docker exec postgres pg_isready -U postgres; then
+              echo "PostgreSQL is ready."
+              break
+            fi
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
+
+      - name: Create Environment File
+        run: |
+          cp .env.sample .env.test
+
+      - name: Run tests
+        run: |
+          source env/bin/activate
+          make t
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: |
+          docker stop postgres
+          docker rm postgres

@@ -27,7 +27,7 @@ pip install -r requirements.txt
 cp .env.sample .env.local
 ```
 
-## Generatie Keys
+## Replace Secrets in the .env.local with:
 
 ```python
 from scripts.generate_key import generate_key
