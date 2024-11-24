@@ -47,6 +47,10 @@ jobs:
             sleep 1
           done
 
+      - name: Create Environment File
+        run: |
+          cp .env.sample .env.test
+
       - name: Run tests
         run: |
           source env/bin/activate
