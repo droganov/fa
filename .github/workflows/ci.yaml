@@ -17,18 +17,11 @@ jobs:
         uses: marocchino/tool-versions-action@v1
         id: versions
 
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ steps.versions.outputs.python }}
+          cache: "pip"
 
       - name: Install dependencies
         run: |
